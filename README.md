@@ -44,6 +44,45 @@ No cutscenes or intro videos, no music or speech, no vinyls, no body-kit
 parts (spoilers/roofs/mirrors), no minimap background art, and 7 of 8 city
 regions — so 45 events outside the City Core cannot load.
 
+## Trimming further: one car, no wheel variety
+
+`KEEP_CARS` and `KEEP_REGION` at the top of `strip-nfsu2.sh` control how much
+is kept. Cutting to Rachel's 350Z alone, and to the stock wheel pack
+(`GEOMETRY_NFSU.BIN`) instead of all 24 brands, was measured at:
+
+| Configuration | On disk | Archive |
+|---|---:|---:|
+| Minimal — 1 car, stock wheels only | 255.6 MiB | **72.6 MiB** |
+| Default — 14 cars, all 24 wheel brands | 417.3 MiB | **117.0 MiB** |
+
+Both numbers are measured, not projected. The minimal build leaves **46.7 MiB
+of headroom** on a 119.3 MiB card, and at the compression ratios observed here
+(world bundles ~28%, car models 31–36%) that headroom buys back roughly:
+
+| Add back | Raw | ≈ Archive cost |
+|---|---:|---:|
+| A second city region (e.g. L4RD) | 115 MiB | ~32 MiB |
+| All 129 race minimaps | 43 MiB | ~12 MiB |
+| The other 23 wheel brands | 58 MiB | ~9 MiB |
+| Story cutscenes | 29 MiB | ~8 MiB |
+| Each additional car | ~8.5 MiB | ~2.9 MiB |
+
+So a minimal car roster plus a second region *and* working minimaps lands near
+116 MiB — still inside the card. **The trade is roster breadth against map
+breadth**, and one region costs about eleven cars.
+
+To go minimal:
+
+```sh
+KEEP_CARS="350Z"     # in strip-nfsu2.sh
+```
+
+then empty every wheel brand except `CARS/WHEELS/GEOMETRY_NFSU.BIN`, which is
+the stock pack — it is the only brand file holding several makes at once
+(`AUTOSTRADA`, `LIMITEDALLOY`, `PIAA`) rather than a single `<BRAND>_STYLE01`
+set. Note the caveat: a savegame with an aftermarket rim fitted will show no
+wheel until a stock one is refitted.
+
 ## Method
 
 Two rules, learned the hard way:
